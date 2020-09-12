@@ -1,0 +1,66 @@
+## App Dev: Setting up a Development Environment v1.1
+Objectives
+In this lab, you will learn how to perform the following tasks:
+
+Provision a Google Compute Engine instance.
+
+Connect to the instance using SSH.
+
+Install software on the instance.
+
+Verify the software installation.
+
+## Steps
+Task 1: Creating a Compute Engine Virtual Machine Instance
+        gcloud compute instances create "dev-instance" --machine-type --zone=us-central1-a "n1-standard-1" --image-project "debian-cloud" --image "debian-9-stretch-v20190213" --subnet "default"
+
+
+        gcloud compute  firewall-rules create default-allow-http --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=http-server
+
+        
+Task 2: Install software on the VM instance
+
+    I. In the SSH session, to update the Debian package list, execute the following command:
+        sudo apt-get update
+
+    II. install the git:
+        sudo apt-get install git
+        then press enter
+
+    III. download the Node.js setup script:
+        curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+
+    IV. install npm and Node.js:
+        sudo apt install nodejs
+
+Task 3: Configure the VM to Run Application Software
+
+    I. check the version of Node.js:
+        node -v
+
+    II. clone the class repository:
+        git clone https://github.com/GoogleCloudPlatform/training-data-analyst
+
+    III. change the working directory:
+        cd ~/training-data-analyst/courses/developingapps/nodejs/devenv/
+
+    IV.  run a simple web server:
+        sudo node server/app.js
+
+    V.   copy the External IP address for the dev-instance and paste on the browser.
+        gcloud compute instances describe dev-instance \ --format='get(networkInterfaces[0].accessConfigs[0].natIP)'
+
+        gcloud compute ssh --project qwiklabs-gcp-04-3bc2651ef46f --zone us-central1-a dev-instance
+
+        Result: You should see a Hello GCP dev! message from Node.js.
+
+    VI. stop the application the SSH window:
+        ctrl C
+
+    VII. install the Node.js library for Compute Engine:
+            npm install
+            
+    VIII. run a simple Node.js application that lists Compute Engine instances
+            node list-gce-instances.js
+    
+    Result: Many details about your machine should appear in the terminal window.
